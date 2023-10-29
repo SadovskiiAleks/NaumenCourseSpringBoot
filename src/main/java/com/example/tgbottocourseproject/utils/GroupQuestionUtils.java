@@ -1,7 +1,7 @@
 package com.example.tgbottocourseproject.utils;
 
-import com.example.tgbottocourseproject.DTO.Question;
-import org.springframework.stereotype.Component;
+import com.example.tgbottocourseproject.models.GroupQuestion;
+import com.example.tgbottocourseproject.models.Question;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -10,14 +10,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class QuestionUtils {
-
-    //1. Необходимо сделать проверку по количетсву клавишь в строке
-    public SendMessage generateQuestionWithAnswers(Update update, Question question, int buttonOnLine) {
+public class GroupQuestionUtils {
+    public SendMessage generateQuestionWithAnswers(Update update, GroupQuestion groupQuestion, int buttonOnLine, String startName) {
         var message = update.getMessage();
         var sendMessage = new SendMessage();
-        int keyboardMarkupQuantity = (int) Math.ceil(question.getAnswers().size() / buttonOnLine);
+        int keyboardMarkupQuantity = (int) Math.ceil(groupQuestion.getQuestionList().size() / buttonOnLine);
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> inlineKeyboardButtonList = new ArrayList<>();
 
@@ -27,13 +24,14 @@ public class QuestionUtils {
             for (int j = 0; buttonOnLine > j; j++) {
                 try {
                     InlineKeyboardButton button = new InlineKeyboardButton();
-                    button.setText(question.getAnswers().get(j + i));
+                    button.setText(groupQuestion.getQuestionList().get(j + i).getNameQuestion());
                     StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append(question.getNumberOfGroupQuestion())
-                            .append(".")
-                            .append(question.getNumberOfQuestion())
-                            .append(" ")
-                            .append(question.getAnswers().get(j + i));
+                    stringBuilder
+//                      .append(question.getNumberOfGroupQuestion())
+//                            .append(".")
+//                            .append(question.getNumberOfQuestion())
+//                            .append(" ")
+                            .append(groupQuestion.getQuestionList().get(j + i).getNameQuestion());
                     button.setCallbackData(stringBuilder.toString());
                     listOfButtonOnLine.add(button);
                 } catch (IndexOutOfBoundsException e) {
@@ -45,16 +43,8 @@ public class QuestionUtils {
         inlineKeyboardMarkup.setKeyboard(inlineKeyboardButtonList);
 
         sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(question.getQuestion());
+        sendMessage.setText(startName);
         sendMessage.setReplyMarkup(inlineKeyboardMarkup);
-        return sendMessage;
-    }
-
-    public SendMessage generateQuestionWithoutAnswers(Update update, Question question) {
-        var message = update.getMessage();
-        var sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(question.getQuestion());
         return sendMessage;
     }
 }

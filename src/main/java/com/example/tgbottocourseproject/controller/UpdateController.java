@@ -1,7 +1,8 @@
 package com.example.tgbottocourseproject.controller;
 
+import com.example.tgbottocourseproject.service.DispatcherService;
 import com.example.tgbottocourseproject.utils.MessageUtils;
-import com.example.tgbottocourseproject.utils.QuestionUtils;
+import com.example.tgbottocourseproject.utils.InlineQuestionUtils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,14 +13,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Log4j
 public class UpdateController {
     private TelegramBot telegramBot;
-    private final QuestionsListController questionsListController;
+    private final DispatcherService dispatcherService;
     private final MessageUtils messageUtils;
-    private final QuestionUtils questionUtils;
+    private final InlineQuestionUtils inlineQuestionUtils;
 
-    public UpdateController(QuestionsListController questionsListController, MessageUtils messageUtils, QuestionUtils questionUtils) {
-        this.questionsListController = questionsListController;
+    public UpdateController(DispatcherService dispatcherService, MessageUtils messageUtils, InlineQuestionUtils inlineQuestionUtils) {
+        this.dispatcherService = dispatcherService;
         this.messageUtils = messageUtils;
-        this.questionUtils = questionUtils;
+        this.inlineQuestionUtils = inlineQuestionUtils;
     }
 
     public void registerBot(TelegramBot telegramBot) {
@@ -32,30 +33,25 @@ public class UpdateController {
         }
         if (update.getMessage() != null) {
             distributeMessageByType(update);
-        } if (update.getCallbackQuery() != null) {
+        } else if (update.getCallbackQuery() != null) {
             distributeCallbackQueryType(update);
         } else {
             log.error("Unsupported message type is received:" + update);
         }
     }
 
-    private void distributeCallbackQueryType(Update update) {
-        questionsListController.addQueryAnswer(update);
-    }
-
     private void distributeMessageByType(Update update) {
         var message = update.getMessage();
         if (message.getText() != null) {
-            questionsListController.addTextAnswer(update);
-        } else if (message.getDocument() != null) {
-
-        } else if (message.getPhoto() != null) {
-
-        }  else {
+            setView(dispatcherService.addTextAnswer(update));
+        } else {
             setUnsupportedMessageTypeView(update);
         }
     }
 
+    private void distributeCallbackQueryType(Update update) {
+        setView(dispatcherService.addQueryAnswer(update));
+    }
 
     private void setUnsupportedMessageTypeView(Update update) {
         var sendMessage = messageUtils.generateSendMessageWithText(update,
@@ -65,11 +61,5 @@ public class UpdateController {
 
     public void setView(SendMessage sendMessage) {
         telegramBot.sendAnswerMessage(sendMessage);
-    }
-
-    private void setFileIsReceivedView(Update update) {
-        var sendMessage = messageUtils.generateSendMessageWithText(update,
-                "file uploading...");
-        setView(sendMessage);
     }
 }
