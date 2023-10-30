@@ -1,6 +1,6 @@
-package com.example.tgbottocourseproject.repository;
+package com.example.tgbottocourseproject.repository.qustion;
 
-import com.example.tgbottocourseproject.models.Answer;
+import com.example.tgbottocourseproject.models.questions.Answer;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

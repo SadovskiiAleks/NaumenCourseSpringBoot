@@ -1,6 +1,6 @@
 package com.example.tgbottocourseproject.utils;
 
-import com.example.tgbottocourseproject.models.Question;
+import com.example.tgbottocourseproject.models.questions.Question;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,6 +12,43 @@ import java.util.List;
 
 @Component
 public class InlineQuestionUtils {
+
+    public SendMessage generateQuestionWithAnswers(Update update, Question question, int groupOfQuestion, int buttonOnLine) {
+        var message = update.getMessage();
+        var sendMessage = new SendMessage();
+        int keyboardMarkupQuantity = (int) Math.ceil(question.getAnswer().size() / buttonOnLine);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> inlineKeyboardButtonList = new ArrayList<>();
+
+        //Уйти от tryCatch
+        for (int i = 0; keyboardMarkupQuantity > i; i++) {
+            List<InlineKeyboardButton> listOfButtonOnLine = new ArrayList<>();
+            for (int j = 0; buttonOnLine > j; j++) {
+                try {
+                    InlineKeyboardButton button = new InlineKeyboardButton();
+                    button.setText(question.getAnswer().get(j + i).getNameAnswer());
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder
+                            .append(question.getNumberQuestion())
+                            .append(".")
+                            .append(question.getNumberQuestion())
+                            .append(" ")
+                            .append(question.getAnswer().get(j + i));
+                    button.setCallbackData(stringBuilder.toString());
+                    listOfButtonOnLine.add(button);
+                } catch (IndexOutOfBoundsException e) {
+
+                }
+            }
+            inlineKeyboardButtonList.add(listOfButtonOnLine);
+        }
+        inlineKeyboardMarkup.setKeyboard(inlineKeyboardButtonList);
+
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setText(question.getNameQuestion());
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        return sendMessage;
+    }
 
     //1. Необходимо сделать проверку по количетсву клавишь в строке
     public SendMessage generateQuestionWithAnswers(Update update, Question question, int buttonOnLine) {
@@ -30,10 +67,8 @@ public class InlineQuestionUtils {
                     button.setText(question.getAnswer().get(j + i).getNameAnswer());
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder
-//                      .append(question.getNumberOfGroupQuestion())
-//                            .append(".")
-//                            .append(question.getNumberOfQuestion())
-//                            .append(" ")
+                            .append(question.getNumberQuestion())
+                            .append(".")
                             .append(question.getAnswer().get(j + i));
                     button.setCallbackData(stringBuilder.toString());
                     listOfButtonOnLine.add(button);

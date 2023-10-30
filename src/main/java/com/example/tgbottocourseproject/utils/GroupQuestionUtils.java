@@ -1,7 +1,6 @@
 package com.example.tgbottocourseproject.utils;
 
-import com.example.tgbottocourseproject.models.GroupQuestion;
-import com.example.tgbottocourseproject.models.Question;
+import com.example.tgbottocourseproject.models.questions.GroupQuestion;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;

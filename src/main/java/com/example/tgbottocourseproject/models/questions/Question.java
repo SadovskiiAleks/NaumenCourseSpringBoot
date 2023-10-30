@@ -1,5 +1,6 @@
-package com.example.tgbottocourseproject.models;
+package com.example.tgbottocourseproject.models.questions;
 
+import com.example.tgbottocourseproject.models.questions.Answer;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -9,16 +10,16 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Entity
 @Data
+@Entity
 @NoArgsConstructor
-public class GroupQuestion {
+public class Question {
     @Id
     @GeneratedValue
     private Long id;
-
-    String groupName;
-
+    private int numberQuestion;
+    private String nameQuestion;
+    private String typeQuestion;
     @OneToMany
-    private List<Question> questionList;
+    private List<Answer> answer;
 }

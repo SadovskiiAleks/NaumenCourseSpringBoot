@@ -1,6 +1,7 @@
 package com.example.tgbottocourseproject.service;
 
 import com.example.tgbottocourseproject.utils.KeyboardButtonsUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,6 +15,7 @@ public class StartBotService {
 
     private final KeyboardButtonsUtils keyboardButtonsUtils;
 
+    @Autowired
     public StartBotService(KeyboardButtonsUtils keyboardButtonsUtils) {
         this.keyboardButtonsUtils = keyboardButtonsUtils;
     }

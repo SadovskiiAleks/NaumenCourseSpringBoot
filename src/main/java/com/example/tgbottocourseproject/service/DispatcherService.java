@@ -1,9 +1,10 @@
 package com.example.tgbottocourseproject.service;
 
-import com.example.tgbottocourseproject.repository.QuestionRepository;
+import com.example.tgbottocourseproject.repository.qustion.QuestionRepository;
 import com.example.tgbottocourseproject.service.questionService.FindPeopleService;
 import com.example.tgbottocourseproject.service.questionService.SurveyService;
 import com.example.tgbottocourseproject.utils.InlineQuestionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,6 +18,7 @@ public class DispatcherService {
     private FindPeopleService findPeopleService;
     private SurveyService surveyService;
 
+    @Autowired
     public DispatcherService(StartBotService startBotService, InlineQuestionUtils inlineQuestionUtils, QuestionRepository questionRepository, FindPeopleService findPeopleService, SurveyService surveyService) {
         this.startBotService = startBotService;
         this.inlineQuestionUtils = inlineQuestionUtils;

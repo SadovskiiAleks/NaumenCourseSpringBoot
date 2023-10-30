@@ -1,18 +1,22 @@
-package com.example.tgbottocourseproject.models;
+package com.example.tgbottocourseproject.models.users;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
-public class Answer {
+@Data
+public class SavingGroupAnswer {
     @Id
     @GeneratedValue
-    private Long id;
-    private String nameAnswer;
+    Long id;
 
+    @OneToMany
+    List<SavingAnswer> savingAnswers;
 }
