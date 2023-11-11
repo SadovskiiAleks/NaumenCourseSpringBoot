@@ -19,4 +19,6 @@ public class SavingGroupAnswer {
 
     @OneToMany
     List<SavingAnswer> savingAnswers;
+
+    String nameOfAnswerGrope;
 }

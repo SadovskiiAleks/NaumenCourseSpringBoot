@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
-public class User {
+public class UserOfTg {
 
     @Id
     @GeneratedValue

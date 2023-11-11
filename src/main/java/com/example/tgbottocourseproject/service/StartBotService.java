@@ -15,6 +15,7 @@ public class StartBotService {
 
     private final KeyboardButtonsUtils keyboardButtonsUtils;
 
+
     @Autowired
     public StartBotService(KeyboardButtonsUtils keyboardButtonsUtils) {
         this.keyboardButtonsUtils = keyboardButtonsUtils;
