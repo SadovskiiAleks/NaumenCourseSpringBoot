@@ -1,4 +1,4 @@
-package com.example.tgbottocourseproject.service.questionService;
+package com.example.tgbottocourseproject.service.menu;
 
 import com.example.tgbottocourseproject.repository.users.UserRepository;
 import org.springframework.stereotype.Service;

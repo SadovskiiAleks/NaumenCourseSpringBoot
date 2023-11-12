@@ -108,6 +108,41 @@ public class InlineQuestionUtils {
         return sendMessage;
     }
 
+    public SendMessage generateQuestionWithAnswersbyInline(Update update, Question question, int buttonOnLine) {
+        var message = update.getCallbackQuery().getMessage();
+        var sendMessage = new SendMessage();
+
+        int test = question.getAnswer().size();
+        int keyboardMarkupQuantity = (int) Math.ceil((double) test / buttonOnLine);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> inlineKeyboardButtonList = new ArrayList<>();
+
+        //Уйти от tryCatch
+        int numberOfAnswer = 0;
+        for (int i = 0; keyboardMarkupQuantity > i; i++) {
+            List<InlineKeyboardButton> listOfButtonOnLine = new ArrayList<>();
+            for (int j = 0; buttonOnLine > j; j++) {
+                if (question.getAnswer().size() == numberOfAnswer) {
+                    break;
+                }
+                try {
+                    InlineKeyboardButton button = createButton(question.getAnswer().get(numberOfAnswer).getNameAnswer());
+                    listOfButtonOnLine.add(button);
+                    numberOfAnswer++;
+                } catch (IndexOutOfBoundsException e) {
+
+                }
+            }
+            inlineKeyboardButtonList.add(listOfButtonOnLine);
+        }
+        inlineKeyboardMarkup.setKeyboard(inlineKeyboardButtonList);
+
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setText(question.getNameQuestion());
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        return sendMessage;
+    }
+
 //    public SendMessage generateStartQuestion(Update update, Question question) {
 //        var message = update.getMessage();
 //        var sendMessage = new SendMessage();

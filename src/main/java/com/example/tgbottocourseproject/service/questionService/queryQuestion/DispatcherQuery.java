@@ -1,10 +1,10 @@
 package com.example.tgbottocourseproject.service.questionService.queryQuestion;
 
-import com.example.tgbottocourseproject.models.questions.Answer;
 import com.example.tgbottocourseproject.models.users.SavingAnswer;
 import com.example.tgbottocourseproject.models.users.SavingGroupAnswer;
 import com.example.tgbottocourseproject.models.users.UserOfTg;
 import com.example.tgbottocourseproject.repository.qustion.GroupQuestionRepository;
+import com.example.tgbottocourseproject.repository.qustion.QuestionRepository;
 import com.example.tgbottocourseproject.repository.users.UserRepository;
 import com.example.tgbottocourseproject.service.messageService.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,10 @@ public class DispatcherQuery {
     Long buttonOnLine = 3l;
 
     @Autowired
-    public DispatcherQuery(UserRepository userRepository) {
+    public DispatcherQuery(UserRepository userRepository, MessageService messageService, GroupQuestionRepository groupQuestionRepository) {
         this.userRepository = userRepository;
+        this.messageService = messageService;
+        this.groupQuestionRepository = groupQuestionRepository;
     }
 
     @Transactional
@@ -39,8 +41,19 @@ public class DispatcherQuery {
 
         // *Удалить выбор вопроса
 
-        // Отправить новый запрос
-        sendMessage = messageService.findAndCreateMassageFromDB(update, buttonOnLine);
+        UserOfTg userOfTg = userRepository.findByUserName(update.getCallbackQuery().getFrom().getUserName());
+        Long numberOfGroupAnswer = userOfTg.getSavingGropeNow();
+        Long numberOfAnswer = userOfTg.getSavingAnswerNow();
+
+        int numberOfSafeQuestion = groupQuestionRepository.findById(numberOfGroupAnswer).get().getQuestionList().size();
+        // Проверить номер вопроса
+        if (numberOfSafeQuestion >= numberOfAnswer.intValue()) {
+            // Отправить новый запрос
+            sendMessage = messageService.findAndCreateMassageFromDBbyInline(update, buttonOnLine);
+            return sendMessage;
+        } else {
+            System.out.println("Возврат ответа");
+        }
 
         return sendMessage;
     }
@@ -54,7 +67,7 @@ public class DispatcherQuery {
         Long savingAnswerNow = userOfTg.getSavingAnswerNow();
         // *записать данные по юзеру
 
-        if (userOfTg.getSavingGroupAnswers().isEmpty()) {
+        if (userOfTg.getSavingGroupAnswers().size()==0) {
             userOfTg.setSavingGroupAnswers(generateAnswerListInUser(savingGropeNow));
         }
 //        else if () {
@@ -64,7 +77,7 @@ public class DispatcherQuery {
 //        }
 
         List<SavingGroupAnswer> savingGroupAnswerList = userOfTg.getSavingGroupAnswers();
-        List<SavingAnswer> savingAnswerList = savingGroupAnswerList.get(savingGropeNow.intValue()).getSavingAnswers();
+        List<SavingAnswer> savingAnswerList = savingGroupAnswerList.get(savingGropeNow.intValue()-1).getSavingAnswers();
 
 //        if (savingAnswerList.get(savingAnswerNow.intValue()) != null) {
 //            SavingAnswer savingAnswer = savingAnswerList.get(savingAnswerNow);
@@ -74,7 +87,7 @@ public class DispatcherQuery {
             //Long l = new Long(savingAnswerNow);
             savingAnswer.setId(Long.valueOf(savingAnswerNow));
             savingAnswer.setAnswer(update.getCallbackQuery().getData());
-            savingAnswerList.add(savingAnswerNow.intValue(), savingAnswer);
+            savingAnswerList.add(savingAnswerNow.intValue()-1, savingAnswer);
 //        }
         // Добавить 1 к номеру проверяемого запроса
         userOfTg.setSavingAnswerNow(Long.valueOf(savingAnswerNow + 1));
@@ -87,8 +100,8 @@ public class DispatcherQuery {
 //        return false;
 //    }
 
-
-    private List<SavingGroupAnswer> generateAnswerListInUser(Long savingGropeNow) {
+    @Transactional
+    protected List<SavingGroupAnswer> generateAnswerListInUser(Long savingGropeNow) {
         int sizeListQuestions = groupQuestionRepository.findById(savingGropeNow).get().getQuestionList().size();
         String nameOfQuestionGroup = groupQuestionRepository.findById(savingGropeNow).get().getGroupName();
         //создать ветку для данных вопросов
@@ -103,6 +116,7 @@ public class DispatcherQuery {
             savingAnswerList.add(savingAnswer);
         }
         savingGroupAnswer.setSavingAnswers(savingAnswerList);
+        savingGroupAnswerList.add(savingGroupAnswer);
         return savingGroupAnswerList;
     }
 }

@@ -1,10 +1,7 @@
 package com.example.tgbottocourseproject.models.users;
 
 import com.example.tgbottocourseproject.models.questions.Answer;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,7 +21,7 @@ public class UserOfTg {
     String userName;
     String languageCode;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     List<SavingGroupAnswer> savingGroupAnswers;
 
     Long savingGropeNow;

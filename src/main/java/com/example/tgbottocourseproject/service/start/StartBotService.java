@@ -1,4 +1,4 @@
-package com.example.tgbottocourseproject.service;
+package com.example.tgbottocourseproject.service.start;
 
 import com.example.tgbottocourseproject.utils.KeyboardButtonsUtils;
 import org.springframework.beans.factory.annotation.Autowired;

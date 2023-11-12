@@ -1,9 +1,6 @@
 package com.example.tgbottocourseproject.models.users;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +14,7 @@ public class SavingGroupAnswer {
     @GeneratedValue
     Long id;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     List<SavingAnswer> savingAnswers;
 
     String nameOfAnswerGrope;

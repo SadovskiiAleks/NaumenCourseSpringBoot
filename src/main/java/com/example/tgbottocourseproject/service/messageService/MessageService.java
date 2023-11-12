@@ -25,17 +25,19 @@ public class MessageService {
     }
 
     @Transactional
-    public SendMessage findAndCreateMassageFromDB(Update update, Long buttonOnLine) {
+    public SendMessage findAndCreateMassageFromDBbyInline(Update update, Long buttonOnLine) {
 //        var message = update.getMessage();
 //        var sendMessage = new SendMessage();
 
-        UserOfTg userOfTg = userRepository.findByUserName(update.getMessage().getFrom().getUserName());
+        UserOfTg userOfTg = userRepository.findByUserName(update.getCallbackQuery().getFrom().getUserName());
         Long groupOfQuestion = userOfTg.getSavingGropeNow();
         Long numberOfQuestion = userOfTg.getSavingAnswerNow();
 
         List<Question> questions = groupQuestionRepository.findById(groupOfQuestion).get().getQuestionList();
-        Question question = questions.get(numberOfQuestion.intValue());
-        SendMessage sendMessage = inlineQuestionUtils.generateQuestionWithAnswers(update, question,buttonOnLine.intValue());
+        Question question = questions.get(numberOfQuestion.intValue() - 1);
+        SendMessage sendMessage = inlineQuestionUtils.generateQuestionWithAnswersbyInline(update, question, buttonOnLine.intValue());
         return sendMessage;
     }
+
+
 }

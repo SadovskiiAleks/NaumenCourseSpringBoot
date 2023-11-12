@@ -1,4 +1,4 @@
-package com.example.tgbottocourseproject.service.questionService;
+package com.example.tgbottocourseproject.service.menu;
 
 import com.example.tgbottocourseproject.models.questions.Question;
 import com.example.tgbottocourseproject.models.users.UserOfTg;
@@ -23,7 +23,8 @@ public class SurveyService {
     private final UserRepository userRepository;
     private final MessageService messageService;
     private final long groupOfQuestion = 1l;
-
+    private final long numberOfQuestion = 1;
+    private final long buttonOnLine = 3;
     @Autowired
     public SurveyService(GroupQuestionRepository groupQuestionRepository, InlineQuestionUtils inlineQuestionUtils, UserRepository userRepository, MessageService messageService) {
         this.groupQuestionRepository = groupQuestionRepository;
@@ -34,9 +35,6 @@ public class SurveyService {
 
     @Transactional
     public SendMessage startService(Update update) {
-        long numberOfQuestion = 1;
-        long buttonOnLine = 3;
-
         UserOfTg userOfTg =  userRepository.findByUserName(update.getMessage().getFrom().getUserName());
         userOfTg.setSavingGropeNow(groupOfQuestion);
         userOfTg.setSavingAnswerNow(numberOfQuestion);
@@ -45,6 +43,9 @@ public class SurveyService {
         List<Question> questions = groupQuestionRepository.findById(groupOfQuestion).get().getQuestionList();
         Question question2 = questions.get((int) numberOfQuestion);
         SendMessage sendMessage = inlineQuestionUtils.generateQuestionWithAnswers(update,question2,(int) buttonOnLine);
+
+        userOfTg.setSavingAnswerNow(groupOfQuestion + 1);
+        userRepository.save(userOfTg);
         return sendMessage;
 
 
