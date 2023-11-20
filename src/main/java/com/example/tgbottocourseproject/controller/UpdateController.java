@@ -1,6 +1,6 @@
 package com.example.tgbottocourseproject.controller;
 
-import com.example.tgbottocourseproject.service.DispatcherService;
+import com.example.tgbottocourseproject.service.s0.DispatcherService;
 import com.example.tgbottocourseproject.utils.MessageUtils;
 import com.example.tgbottocourseproject.utils.InlineQuestionUtils;
 import lombok.extern.log4j.Log4j;

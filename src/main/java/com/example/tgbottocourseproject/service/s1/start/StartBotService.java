@@ -1,5 +1,6 @@
-package com.example.tgbottocourseproject.service.start;
+package com.example.tgbottocourseproject.service.s1.start;
 
+import com.example.tgbottocourseproject.service.messageService.MessageService;
 import com.example.tgbottocourseproject.utils.KeyboardButtonsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,12 +14,11 @@ import java.util.List;
 @Component
 public class StartBotService {
 
-    private final KeyboardButtonsUtils keyboardButtonsUtils;
-
+    private final MessageService messageService;
 
     @Autowired
-    public StartBotService(KeyboardButtonsUtils keyboardButtonsUtils) {
-        this.keyboardButtonsUtils = keyboardButtonsUtils;
+    public StartBotService(MessageService messageService) {
+        this.messageService = messageService;
     }
 
     public SendMessage createStartKeyboard(Update update) {
@@ -27,6 +27,6 @@ public class StartBotService {
         List<String> button = new ArrayList<>();
         button.add("Оставить метаданные");
         button.add("Найти людей в команду");
-        return keyboardButtonsUtils.generateKeyboardButton(update, text, button);
+        return messageService.generateKeyboardButton(update, text, button);
     }
 }

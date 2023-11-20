@@ -1,12 +1,11 @@
 package com.example.tgbottocourseproject.service.messageService;
 
 import com.example.tgbottocourseproject.models.questions.Question;
-import com.example.tgbottocourseproject.models.users.UserOfTg;
 import com.example.tgbottocourseproject.repository.qustion.GroupQuestionRepository;
 import com.example.tgbottocourseproject.repository.users.UserRepository;
 import com.example.tgbottocourseproject.utils.InlineQuestionUtils;
+import com.example.tgbottocourseproject.utils.KeyboardButtonsUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -17,27 +16,27 @@ public class MessageService {
     private UserRepository userRepository;
     private final GroupQuestionRepository groupQuestionRepository;
     private final InlineQuestionUtils inlineQuestionUtils;
+    private final KeyboardButtonsUtils keyboardButtonsUtils;
 
-    public MessageService(UserRepository userRepository, GroupQuestionRepository groupQuestionRepository, InlineQuestionUtils inlineQuestionUtils) {
+    public MessageService(UserRepository userRepository, GroupQuestionRepository groupQuestionRepository, InlineQuestionUtils inlineQuestionUtils, KeyboardButtonsUtils keyboardButtonsUtils) {
         this.userRepository = userRepository;
         this.groupQuestionRepository = groupQuestionRepository;
         this.inlineQuestionUtils = inlineQuestionUtils;
+        this.keyboardButtonsUtils = keyboardButtonsUtils;
     }
 
-    @Transactional
-    public SendMessage findAndCreateMassageFromDBbyInline(Update update, Long buttonOnLine) {
-//        var message = update.getMessage();
-//        var sendMessage = new SendMessage();
-
-        UserOfTg userOfTg = userRepository.findByUserName(update.getCallbackQuery().getFrom().getUserName());
-        Long groupOfQuestion = userOfTg.getSavingGropeNow();
-        Long numberOfQuestion = userOfTg.getSavingAnswerNow();
-
-        List<Question> questions = groupQuestionRepository.findById(groupOfQuestion).get().getQuestionList();
-        Question question = questions.get(numberOfQuestion.intValue() - 1);
+    public SendMessage findAndCreateMassageFromDBbyInline(Update update, Long buttonOnLine, Question question) {
         SendMessage sendMessage = inlineQuestionUtils.generateQuestionWithAnswersbyInline(update, question, buttonOnLine.intValue());
         return sendMessage;
     }
 
+    public SendMessage findAndCreateMassageFromDBbyMessage(Update update, Long buttonOnLine, Question question) {
+        SendMessage sendMessage = inlineQuestionUtils
+                .generateQuestionWithAnswers(update, question, buttonOnLine.intValue());
+        return sendMessage;
+    }
 
+    public SendMessage generateKeyboardButton(Update update, String text, List<String> button) {
+       return keyboardButtonsUtils.generateKeyboardButton(update, text, button);
+    }
 }

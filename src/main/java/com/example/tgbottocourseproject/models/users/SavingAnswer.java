@@ -14,6 +14,8 @@ public class SavingAnswer {
     @GeneratedValue
     Long id;
 
+    String question;
+
     String answer;
 
 }

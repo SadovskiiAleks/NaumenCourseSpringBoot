@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SavingAnswerRepository extends CrudRepository<SavingAnswer, Long> {
+
+
 }
